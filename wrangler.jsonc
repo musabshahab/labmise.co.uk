@@ -1,0 +1,20 @@
+{
+  // Cloudflare Worker: serves the static site in ./public and handles the contact form.
+  "name": "labmise-co-uk",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+  // Sends contact-form emails through Cloudflare Email Service.
+  "send_email": [{ "name": "EMAIL" }],
+  "vars": {
+    // Address the enquiry email is sent FROM. Must be on a domain set up for email in Cloudflare.
+    "CONTACT_FROM": "website@labmise.co.uk"
+  },
+  "observability": { "enabled": true }
+  // Secrets (set in the Cloudflare dashboard, not here):
+  //   CONTACT_TO        – inbox that receives enquiries (a verified destination address)
+  //   TURNSTILE_SECRET  – optional; enables the Turnstile spam check
+}

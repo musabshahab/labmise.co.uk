@@ -146,21 +146,74 @@
     update();
   }
 
-  /* ---------- Contact form: compose an email, store nothing ---------- */
+  /* ---------- Contact form: posts to the Worker at /api/contact ---------- */
   var form = $('#contact-form');
   if (form) {
+    var note = $('#form-note');
+    var fallbackEmail = 'hello@labmise.co.uk';
+    var setNote = function (text, state) {
+      note.textContent = text;
+      note.classList.toggle('is-ok', state === 'ok');
+      note.classList.toggle('is-error', state === 'error');
+    };
+
+    // Optional Turnstile spam check, only loaded when a site key is configured.
+    var siteKey = form.getAttribute('data-turnstile-sitekey');
+    if (siteKey) {
+      var slot = $('#turnstile-slot');
+      slot.className = 'cf-turnstile';
+      slot.setAttribute('data-sitekey', siteKey);
+      slot.setAttribute('data-theme', 'dark');
+      var ts = document.createElement('script');
+      ts.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+      ts.async = true;
+      ts.defer = true;
+      document.head.appendChild(ts);
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      if (!form.reportValidity()) return;
-      var to = form.getAttribute('action').replace(/^mailto:/, '');
-      var name = $('#f-name').value.trim();
-      var company = $('#f-company').value.trim();
-      var email = $('#f-email').value.trim();
-      var message = $('#f-message').value.trim();
-      var subject = 'Automation enquiry' + (company ? ' — ' + company : '');
-      var body = message + '\n\n—\n' + name + (company ? '\n' + company : '') + '\n' + email;
-      window.location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-      $('#form-note').textContent = 'Your email app should now be open with the message ready. If nothing happened, write to ' + to + ' directly.';
+      if (!form.reportValidity() || form.classList.contains('is-sending')) return;
+      form.classList.add('is-sending');
+      setNote('Sending…');
+
+      fetch(form.getAttribute('action'), { method: 'POST', body: new FormData(form) })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            if (res.ok && data.ok) {
+              form.reset();
+              setNote('Thanks — your message has been sent. We’ll reply by email.', 'ok');
+            } else {
+              setNote((data.error || 'Something went wrong.') + ' You can also write to ' + fallbackEmail + '.', 'error');
+            }
+          });
+        })
+        .catch(function () {
+          setNote('We couldn’t reach the server. Please write to ' + fallbackEmail + ' instead.', 'error');
+        })
+        .then(function () {
+          form.classList.remove('is-sending');
+          if (window.turnstile && siteKey) window.turnstile.reset();
+        });
+    });
+  }
+
+  /* ---------- Booking: shown only when a booking link is configured ---------- */
+  var book = $('#book');
+  var bookingUrl = book ? (book.getAttribute('data-booking-url') || '').trim() : '';
+  if (book && bookingUrl.indexOf('https://') === 0) {
+    book.hidden = false;
+    $$('[data-booking-only]').forEach(function (el) { el.hidden = false; });
+    $('#booking-link').href = bookingUrl;
+    $('#booking-load').addEventListener('click', function () {
+      var frame = $('#booking-frame');
+      var iframe = document.createElement('iframe');
+      iframe.src = bookingUrl;
+      iframe.title = 'Book a call with LABMISE';
+      iframe.loading = 'lazy';
+      frame.textContent = '';
+      frame.classList.add('is-loaded');
+      frame.appendChild(iframe);
     });
   }
 

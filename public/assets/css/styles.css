@@ -1073,6 +1073,37 @@ input[type="range"]::-moz-range-thumb {
 @media (max-width: 940px) { .contact-layout { grid-template-columns: 1fr; } }
 @media (max-width: 520px) { .form__row { grid-template-columns: 1fr; } }
 
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.form__note.is-ok { color: var(--accent); }
+.form__note.is-error { color: var(--warn); }
+.form.is-sending button[type="submit"] { opacity: 0.6; pointer-events: none; }
+[hidden] { display: none !important; }
+
+/* ---------- Booking ---------- */
+
+.booking-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: clamp(28px, 5vw, 72px);
+  align-items: start;
+}
+.booking-layout h2 { margin: 18px 0; }
+.booking__frame {
+  min-height: 320px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  padding: 28px;
+  border: 1px solid var(--line-strong);
+  border-radius: 24px;
+  background: var(--panel);
+  text-align: center;
+}
+.booking__frame.is-loaded { display: block; padding: 0; overflow: hidden; background: #fff; }
+.booking__frame iframe { display: block; width: 100%; height: 720px; border: 0; }
+@media (max-width: 940px) { .booking-layout { grid-template-columns: 1fr; } }
+
 /* ---------- Sources ---------- */
 
 .sources {

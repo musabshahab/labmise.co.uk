@@ -53,6 +53,7 @@
         <a href="#approach">Approach</a>
         <a href="#calculator">Calculator</a>
         <a href="#faq">FAQ</a>
+        <a href="#book" data-booking-only hidden>Book a call</a>
         <a class="nav__cta-mobile" href="#contact">Get in touch</a>
       </nav>
 
@@ -555,9 +556,15 @@
           <h2>Tell us about the task you’d most like off your desk.</h2>
           <p>One paragraph is enough. We’ll reply by email.</p>
           <p class="contact__email">Or write to us directly:<br><a href="mailto:hello@labmise.co.uk">hello@labmise.co.uk</a></p>
+          <p data-booking-only hidden><a class="link-arrow" href="#book">Or book a call <span aria-hidden="true">→</span></a></p>
         </div>
 
-        <form class="form reveal" id="contact-form" action="mailto:hello@labmise.co.uk" method="post" enctype="text/plain">
+        <!-- Turnstile spam check: paste the SITE key into data-turnstile-sitekey to switch it on
+             (and set the TURNSTILE_SECRET secret on the Worker). Leave empty to keep it off. -->
+        <form class="form reveal" id="contact-form" action="/api/contact" method="post" data-turnstile-sitekey="">
+          <div class="hp" aria-hidden="true">
+            <label>Leave this field empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+          </div>
           <div class="form__row">
             <label class="field">
               <span>Your name</span>
@@ -576,9 +583,31 @@
             <span>What would you like to automate?</span>
             <textarea name="message" id="f-message" rows="5" required placeholder="e.g. We spend about two days a week keying supplier invoices into our accounts system…"></textarea>
           </label>
+          <div id="turnstile-slot"></div>
           <button class="btn btn--primary btn--block" type="submit">Send message</button>
-          <p class="form__note" id="form-note">This opens your email app with the message ready to send. Nothing is stored on this website.</p>
+          <p class="form__note" id="form-note" role="status" aria-live="polite">Your message is emailed straight to us. It isn’t stored on this website.</p>
         </form>
+      </div>
+    </section>
+
+    <!-- ============ BOOKING ============
+         Hidden until a booking link is set. Paste your Cal.com or Calendly link into
+         data-booking-url below (e.g. https://cal.com/yourname/intro) and this section,
+         plus the "Book a call" links, appear automatically. -->
+    <section class="section section--alt" id="book" data-booking-url="" hidden>
+      <div class="wrap booking-layout">
+        <div class="reveal">
+          <p class="eyebrow"><span class="dot"></span>Book a call</p>
+          <h2>Prefer to talk it through?</h2>
+          <p>Pick a time that suits you and we’ll talk about the task you’d like to automate.</p>
+          <p class="note">The calendar is provided by a third-party booking service and only loads when you open it.</p>
+        </div>
+        <div class="booking reveal">
+          <div class="booking__frame" id="booking-frame">
+            <button class="btn btn--primary" type="button" id="booking-load">Show available times</button>
+            <a class="link-arrow" id="booking-link" href="#" target="_blank" rel="noopener">Or open the booking page in a new tab <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
       </div>
     </section>
 
