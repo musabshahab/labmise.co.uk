@@ -384,6 +384,17 @@ p { color: var(--muted); text-wrap: pretty; }
   margin-top: 36px;
 }
 
+.hero__free {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+.hl { color: var(--accent); font-weight: 600; }
+
 /* Flow diagram */
 .flow {
   position: relative;
